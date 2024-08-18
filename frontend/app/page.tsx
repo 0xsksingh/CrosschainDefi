@@ -177,7 +177,7 @@ export default function Component() {
                 <div className="rounded-lg bg-background p-6 shadow-sm">
                   <blockquote>
                     <p className="text-muted-foreground">
-                      "I've been using Multichain App for all my lending, depositing, and redemption needs. The
+                      "I have been using Multichain App for all my lending, depositing, and redemption needs. The
                       cross-chain functionality is unparalleled, and the team has been incredibly responsive to my
                       queries."
                     </p>
