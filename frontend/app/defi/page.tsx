@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ThirdwebProvider, useActiveAccount } from "thirdweb/react";
+import {  useActiveAccount } from "thirdweb/react";
 import LiquidityChart from "@/components/LiquidityChart";
 import ChainStats from "@/components/ChainStats";
 import ActionModal from "@/components/ActionModal";
