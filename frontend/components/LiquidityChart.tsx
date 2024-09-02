@@ -5,7 +5,7 @@ export default function LiquidityChart({ chains }) {
     labels: Array.from({ length: 1000 }, (_, i) => i),
     datasets: chains.map(chain => ({
       label: chain.name,
-      data: chain.data || [],
+      data: [1, 2, 3, 4, 5, 6, 7, 8],
       borderColor: chain.color,
       tension: 0.2,
     })),
