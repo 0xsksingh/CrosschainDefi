@@ -1,5 +1,5 @@
+"use client";
 import { useState, useEffect } from 'react';
-import Web3 from 'web3';
 import Chart from 'chart.js/auto';
 
 import { Button } from "@/components/ui/button"

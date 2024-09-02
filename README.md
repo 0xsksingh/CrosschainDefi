@@ -5,6 +5,24 @@
 ## Overview
 The Multichain Lending and Borrowing Platform is designed to empower users with the flexibility to manage their assets across various blockchain networks. Utilizing a Hub and Spoke model, this platform facilitates seamless interoperability and liquidity, allowing users to engage in lending, depositing, repaying, and redeeming activities on different chains without the complexity typically associated with multichain operations.
 
+## Contract Addresses
+
+Hub ChainiD - 10002
+MultiChainLendingHub -  https://thirdweb.com/sepolia/0x76414c98ee9AD3F776054f16A351831b71870Ff3
+
+MultiChainToken -
+
+Sepolia -  https://thirdweb.com/sepolia/0xDe918aEf7f38AA916625d90B3Ca60D5c20B19317
+
+BaseSepolia - 0x6E411aAE23ba8eB4EeD82e274CC32887511eCF6E
+
+Op Sepolia - 0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60
+
+MultiChainSpoke - 
+1. https://thirdweb.com/base-sepolia-testnet/0x553126B5d9535a30fA4639adA7ADBdfdDC746AFd
+
+2. https://thirdweb.com/op-sepolia-testnet/0xa93208bB5798bd2B7A6d56DE7F346D332088528c
+
 ## Features
 - **Lend on Multiple Chains**: Users can lend their assets on one blockchain while benefiting from competitive interest rates.
   

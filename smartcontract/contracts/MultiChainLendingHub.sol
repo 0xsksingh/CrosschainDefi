@@ -4,8 +4,10 @@ pragma solidity ^0.8.0;
 import "./IWormholeRelayer.sol";
 import "./IWormholeReceiver.sol";
 
+// Find the relayer addr - https://docs.wormhole.com/wormhole/reference/blockchain-environments/evm#wormhole-details-18
 contract MultiChainLendingHub is IWormholeReceiver{
     uint256 constant GAS_LIMIT = 500_000;
+
     IWormholeRelayer public immutable wormholeRelayer;
     uint16 hubChainID;
 
