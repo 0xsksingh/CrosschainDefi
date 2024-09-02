@@ -18,10 +18,15 @@ BaseSepolia - 0x6E411aAE23ba8eB4EeD82e274CC32887511eCF6E
 
 Op Sepolia - 0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60
 
+Arb Sepolia - 0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60
+
 MultiChainSpoke - 
+
 1. https://thirdweb.com/base-sepolia-testnet/0x553126B5d9535a30fA4639adA7ADBdfdDC746AFd
 
 2. https://thirdweb.com/op-sepolia-testnet/0xa93208bB5798bd2B7A6d56DE7F346D332088528c
+
+3. https://thirdweb.com/arbitrum-sepolia/0xa93208bB5798bd2B7A6d56DE7F346D332088528c
 
 ## Features
 - **Lend on Multiple Chains**: Users can lend their assets on one blockchain while benefiting from competitive interest rates.

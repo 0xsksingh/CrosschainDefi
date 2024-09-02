@@ -1,9 +1,11 @@
 export default function ChainStats({ chains }) {
+
+  
     return (
       <div>
         <h3 className="mb-3">Chain Stats</h3>
         <div className="flex flex-wrap">
-          {chains.map((chain, index) => (
+          { chains.map((chain, index) => (
             <div key={index} className="card shadow m-3">
               <div className="card-body">
                 <div className="card-title flex items-center">

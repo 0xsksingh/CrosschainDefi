@@ -27,19 +27,19 @@ export default function Home() {
 
       const spokechainsData = [
         {
-          name: "Sepolia",
-          logo: "img/sepolia.svg",
+          name: "Arbitrium Sepolia",
+          logo: "/sepolia.png",
           color: "rgb(50, 60, 150)",
-          chainID: 11155111,
-          rpc: "https://eth-sepolia.public.blastapi.io",
-          wormholeID: 10002,
-          spokeAddress: "0x553126B5d9535a30fA4639adA7ADBdfdDC746AFd",
-          tokenAddress: "0xDe918aEf7f38AA916625d90B3Ca60D5c20B19317",
+          chainID: 421614,
+          rpc: "https://arbitrum-sepolia.blockpi.network/v1/rpc/",
+          wormholeID: 10003,
+          spokeAddress: "0xa93208bB5798bd2B7A6d56DE7F346D332088528c",
+          tokenAddress: "0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60",
           symbol: "ETH",
           data: [],
         }, {
           name: "Base Sepolia",
-          logo: "img/arbitrum.svg",
+          logo: "/sepolia.png",
           color: "rgb(50, 60, 150)",
           chainID: 84532,
           rpc: "https://sepolia.base.org",
@@ -50,7 +50,7 @@ export default function Home() {
           data: [],
         }, {
           name: "OP Sepolia",
-          logo: "img/opsepolia.svg",
+          logo: "/sepolia.png",
           color: "rgb(200, 50, 200)",
           chainID: 11155420,
           rpc: "https://sepolia.optimism.io",
@@ -100,10 +100,9 @@ export default function Home() {
       <div className="flex">
         <div className="w-2/3">
           <LiquidityChainChart chains={chains} />
-          {/* <LiquidityChart chains={chains} /> */}
         </div>
         <div className="w-1/3">
-          {/* <ChainStats chains={chains} /> */}
+          <ChainStats chains={chains} />
         </div>
       </div>
 

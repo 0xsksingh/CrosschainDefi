@@ -1,29 +1,95 @@
 import { useState } from "react";
-import { useReadContract } from "thirdweb/react";
 import { ethers } from "ethers";
+import { createThirdwebClient, defineChain, getContract } from "thirdweb";
+import { prepareContractCall } from "thirdweb"
+import { useSendTransaction } from "thirdweb/react";
 
 export default function ActionModal({ action, chains, updateStats, setIsModalOpen }) {
   const [amount, setAmount] = useState("");
   const [selectedChain, setSelectedChain] = useState(null);
-  const { contract } = useReadContract(selectedChain?.cAddr);
 
-  const handleSubmit = async (e) => {
+  const { mutate: sendTransaction } = useSendTransaction();
+
+  const client = createThirdwebClient({ 
+    clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!
+   });
+  
+
+  console.log(selectedChain)
+
+
+  const handleSubmit = async (e : any) => {
     e.preventDefault();
 
     if (!selectedChain || !amount) return;
 
     try {
       // Assuming the contract functions are similar to what you had in JS
-      const weiAmount = ethers.utils.parseEther(amount.toString());
+      const weiAmount = ethers.parseEther(amount.toString());
 
       if (action === "Deposit") {
-        await contract.deposit(weiAmount);
+
+        const contract = getContract({ 
+            client, 
+            chain: defineChain(selectedChain.chainID), 
+            address: selectedChain?.spokeAddress
+          });
+
+        const transaction = prepareContractCall({ 
+            contract, 
+            method: "function deposit(uint256 amount)", 
+            params: [weiAmount] 
+          });
+
+         await sendTransaction(transaction);
+
       } else if (action === "Withdraw") {
-        await contract.withdraw(weiAmount);
+
+        const contract = getContract({ 
+            client, 
+            chain: defineChain(selectedChain.chainID), 
+            address: selectedChain?.spokeAddress
+          });
+
+          const transaction = await prepareContractCall({ 
+            contract, 
+            method: "function requestWithdraw(uint256 amount)", 
+            params: [weiAmount] 
+          });
+
+        await sendTransaction(transaction);
+
       } else if (action === "Borrow") {
-        await contract.borrow(weiAmount);
+        
+        const contract = getContract({ 
+            client, 
+            chain: defineChain(selectedChain.chainID), 
+            address: selectedChain?.spokeAddress
+          });
+
+          const transaction = await prepareContractCall({ 
+            contract, 
+            method: "function requestBorrow(uint256 amount)", 
+            params: [weiAmount] 
+          });
+
+          await sendTransaction(transaction);
+
       } else if (action === "Repay") {
-        await contract.repay(weiAmount);
+
+        const contract = getContract({ 
+            client, 
+            chain: defineChain(selectedChain.chainID), 
+            address: selectedChain?.spokeAddress
+          });
+
+        const transaction = await prepareContractCall({ 
+            contract, 
+            method: "function repayBorrow(uint256 amount)", 
+            params: [weiAmount] 
+          });
+
+        await sendTransaction(transaction);
       }
 
       updateStats(weiAmount); // Update stats after the transaction
@@ -33,12 +99,14 @@ export default function ActionModal({ action, chains, updateStats, setIsModalOpe
     }
   };
 
+
+
   return (
     <div className="modal">
       <div className="modal-content">
         <span className="close" onClick={() => setIsModalOpen(false)}>&times;</span>
         <h2>{action}</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={(e) => handleSubmit(e)}>
           <div className="mb-3">
             <label htmlFor="amount">Amount</label>
             <input
