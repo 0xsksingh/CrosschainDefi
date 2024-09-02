@@ -20,7 +20,19 @@ export default function Home() {
     // Load chains data here
     const loadChains = async () => {
 
-      const spokechainsData = [{
+      const spokechainsData = [
+        {
+          name: "Sepolia",
+          logo: "img/sepolia.svg",
+          color: "rgb(50, 60, 150)",
+          chainID: 11155111,
+          rpc: "https://eth-sepolia.public.blastapi.io",
+          wormholeID: 10002,
+          spokeAddress: "0x553126B5d9535a30fA4639adA7ADBdfdDC746AFd",
+          tokenAddress: "0xDe918aEf7f38AA916625d90B3Ca60D5c20B19317",
+          symbol: "ETH",
+          data: [],
+      },{
         name: "Base Sepolia",
         logo: "img/arbitrum.svg",
         color: "rgb(50, 60, 150)",

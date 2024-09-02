@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useContract } from "@thirdweb-dev/react";
+import { useReadContract } from "thirdweb/react";
 import { ethers } from "ethers";
 
 export default function ActionModal({ action, chains, updateStats, setIsModalOpen }) {
   const [amount, setAmount] = useState("");
   const [selectedChain, setSelectedChain] = useState(null);
-  const { contract } = useContract(selectedChain?.cAddr);
+  const { contract } = useReadContract(selectedChain?.cAddr);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
