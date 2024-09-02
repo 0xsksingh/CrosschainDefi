@@ -1,140 +1,100 @@
 "use client";
-import { useState, useEffect } from 'react';
-import Chart from 'chart.js/auto';
+import { useState, useEffect } from "react";
+import { ThirdwebProvider, useActiveAccount } from "thirdweb/react";
+import LiquidityChart from "@/components/LiquidityChart";
+import ChainStats from "@/components/ChainStats";
+import ActionModal from "@/components/ActionModal";
 
-import { Button } from "@/components/ui/button"
+export default function Home() {
+  const [deposited, setDeposited] = useState(0);
+  const [borrowed, setBorrowed] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [action, setAction] = useState("");
+  const [chains, setChains] = useState([]);
+  const [selectedChain, setSelectedChain] = useState(null);
 
-import { Input } from "@/components/ui/input"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-
-export default function LendingBorrowingPage() {
-  const [account, setAccount] = useState('');
-  const [collateral, setCollateral] = useState('');
-  const [borrowedAmount, setBorrowedAmount] = useState('');
-  const [healthFactor, setHealthFactor] = useState('');
-  const [chartData, setChartData] = useState(null);
+  const address = useActiveAccount();
 
   useEffect(() => {
-    if (typeof window.ethereum !== 'undefined') {
-      const web3 = new Web3(window.ethereum);
-      window.ethereum.request({ method: 'eth_requestAccounts' })
-        .then(accounts => setAccount(accounts[0]));
-    }
+    // Load chains data here
+    const loadChains = async () => {
 
-    // Initialize Chart.js
-    const ctx = document.getElementById('myChart').getContext('2d');
-    const chart = new Chart(ctx, {
-      type: 'line',
-      data: chartData,
-      options: {
-        responsive: true,
-      },
-    });
+      const spokechainsData = [{
+        name: "Base Sepolia",
+        logo: "img/arbitrum.svg",
+        color: "rgb(50, 60, 150)",
+        chainID: 84532,
+        rpc: "https://sepolia.base.org",
+        wormholeID: 10004,
+        spokeAddress: "0x553126B5d9535a30fA4639adA7ADBdfdDC746AFd",
+        tokenAddress: "0x6E411aAE23ba8eB4EeD82e274CC32887511eCF6E",
+        symbol: "ETH",
+        data: [],
+    }, {
+        name: "OP Sepolia",
+        logo: "img/opsepolia.svg",
+        color: "rgb(200, 50, 200)",
+        chainID: 11155420,
+        rpc: "https://sepolia.optimism.io",
+        wormholeID: 10005,
+        spokeAddress: "0xa93208bB5798bd2B7A6d56DE7F346D332088528c",
+        tokenAddress: "0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60",
+        symbol: "ETH",
+        data: [],
+    }]
+    
+      setChains(spokechainsData);
+    };
 
-    return () => chart.destroy(); // Cleanup on unmount
-  }, [chartData]);
+    loadChains();
+  }, []);
 
-  const handleBorrow = () => {
-    // Handle borrow logic
+  const handleAction = (actionType) => {
+    setAction(actionType);
+    setIsModalOpen(true);
   };
 
-  const handleRepay = () => {
-    // Handle repay logic
+  const updateStats = (newDeposited, newBorrowed) => {
+    setDeposited(newDeposited);
+    setBorrowed(newBorrowed);
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <Card>
-        <CardHeader>
-          <h2 className="text-lg font-semibold">Lending & Borrowing Dashboard</h2>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row md:space-x-4">
-            <div className="w-full md:w-1/2">
-              <h3 className="text-md font-medium">Account Information</h3>
-              <p className="text-gray-600">Address: {account}</p>
-            </div>
-            <div className="w-full md:w-1/2">
-              <h3 className="text-md font-medium">Collateral</h3>
-              <Input
-                value={collateral}
-                onChange={(e) => setCollateral(e.target.value)}
-                placeholder="Enter collateral amount"
-              />
-            </div>
+      <div className="container mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-4">MultiChainDefi</h1>
+        <p className="mb-4">
+          Multichaindefi innovates DeFi by offering a multi-chain lending and borrowing protocol...
+        </p>
+        <div className="flex justify-between mb-4">
+          <div>
+            <button onClick={() => handleAction("Deposit")} className="btn btn-secondary mr-3">Deposit</button>
+            <button onClick={() => handleAction("Withdraw")} className="btn btn-secondary mr-3">Withdraw</button>
+            <button onClick={() => handleAction("Borrow")} className="btn btn-secondary mr-3">Borrow</button>
+            <button onClick={() => handleAction("Repay")} className="btn btn-secondary mr-3">Repay</button>
           </div>
-
-          <div className="mt-4">
-            <h3 className="text-md font-medium">Borrowed Amount</h3>
-            <Input
-              value={borrowedAmount}
-              onChange={(e) => setBorrowedAmount(e.target.value)}
-              placeholder="Enter borrowed amount"
-            />
+          <div className="flex">
+            <p className="mr-3">Deposited: <span>{deposited}</span></p>
+            <p>Borrowed: <span>{borrowed}</span></p>
           </div>
-
-          <div className="mt-4">
-            <h3 className="text-md font-medium">Health Factor</h3>
-            <Input
-              value={healthFactor}
-              onChange={(e) => setHealthFactor(e.target.value)}
-              placeholder="Enter health factor"
-            />
+        </div>
+        <div className="flex">
+          <div className="w-2/3">
+            <LiquidityChart chains={chains} />
           </div>
-
-          <div className="mt-6">
-            <h3 className="text-md font-medium">Portfolio Chart</h3>
-            <canvas id="myChart" className="w-full h-64"></canvas>
+          <div className="w-1/3">
+            <ChainStats chains={chains} />
           </div>
-        </CardContent>
-        <CardFooter className="flex justify-end space-x-4">
-          <Button onClick={handleBorrow}>Borrow</Button>
-          <Button onClick={handleRepay}>Repay</Button>
-        </CardFooter>
-      </Card>
+        </div>
 
-      <div className="mt-8">
-        <h3 className="text-md font-medium">Loan History</h3>
-        <Table className="w-full mt-4">
-          <TableHead>
-            <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Collateral</TableCell>
-              <TableCell>Borrowed</TableCell>
-              <TableCell>Health Factor</TableCell>
-              <TableCell>Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {/* Replace with dynamic data */}
-            <TableRow>
-              <TableCell>01/01/2024</TableCell>
-              <TableCell>1 ETH</TableCell>
-              <TableCell>1000 USDT</TableCell>
-              <TableCell>2.5</TableCell>
-              <TableCell>Borrow</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        {isModalOpen && (
+          <ActionModal
+            action={action}
+            chains={chains}
+            updateStats={updateStats}
+            setIsModalOpen={setIsModalOpen}
+          />
+        )}
       </div>
-    </div>
   );
 }
