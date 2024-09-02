@@ -13,7 +13,11 @@ export default function Home() {
   const [chains, setChains] = useState([]);
   const [selectedChain, setSelectedChain] = useState(null);
 
-
+  const HUB_ADDRESS = "0x553126B5d9535a30fA4639adA7ADBdfdDC746AFd";
+  const HUB_TOKEN_ADDRESS = "0xDe918aEf7f38AA916625d90B3Ca60D5c20B19317";
+  const HUB_CHAIN_ID = 11155111;
+  const HUB_WORMHOLE_ID = 10002;
+  
   const address = useActiveAccount();
 
   useEffect(() => {
