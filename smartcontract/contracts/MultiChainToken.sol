@@ -21,7 +21,6 @@ contract MultiChainToken is ERC20 {
     }
 
     modifier onlyOwner {
-        // require(owners.contains(msg.sender), "Only owners can call this function");
         bool isOwner = false;
         for (uint i = 0; i < owners.length; i++) {
             if (owners[i] == msg.sender) {
