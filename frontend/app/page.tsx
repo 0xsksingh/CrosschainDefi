@@ -13,11 +13,11 @@ export default function Component() {
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
                   <h1 className="text-4xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none">
-                    Seamlessly Lend, Deposit, Repay, and Redeem Across Multiple Chains
+                    Seamlessly Lend, Deposit, Repay, and Redeem Assets Across Multiple Chains
                   </h1>
                   <p className="text-muted-foreground max-w-[600px] md:text-xl">
                     Our Hub and Spoke model provides unparalleled cross-chain functionality, allowing you to seamlessly
-                    manage your assets across various blockchain networks.
+                    manage your assets across various blockchain networks with ease.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
