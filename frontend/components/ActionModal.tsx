@@ -10,15 +10,15 @@ export default function ActionModal({ action, chains, updateStats, setIsModalOpe
 
   const { mutate: sendTransaction } = useSendTransaction();
 
-  const client = createThirdwebClient({ 
+  const client = createThirdwebClient({
     clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!
-   });
-  
+  });
+
 
   console.log(selectedChain)
 
 
-  const handleSubmit = async (e : any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (!selectedChain || !amount) return;
@@ -29,65 +29,65 @@ export default function ActionModal({ action, chains, updateStats, setIsModalOpe
 
       if (action === "Deposit") {
 
-        const contract = getContract({ 
-            client, 
-            chain: defineChain(selectedChain.chainID), 
-            address: selectedChain?.spokeAddress
-          });
+        const contract = getContract({
+          client,
+          chain: defineChain(selectedChain.chainID),
+          address: selectedChain?.spokeAddress
+        });
 
-        const transaction = prepareContractCall({ 
-            contract, 
-            method: "function deposit(uint256 amount)", 
-            params: [weiAmount] 
-          });
+        const transaction = prepareContractCall({
+          contract,
+          method: "function deposit(uint256 amount)",
+          params: [weiAmount]
+        });
 
-         await sendTransaction(transaction);
+        await sendTransaction(transaction);
 
       } else if (action === "Withdraw") {
 
-        const contract = getContract({ 
-            client, 
-            chain: defineChain(selectedChain.chainID), 
-            address: selectedChain?.spokeAddress
-          });
+        const contract = getContract({
+          client,
+          chain: defineChain(selectedChain.chainID),
+          address: selectedChain?.spokeAddress
+        });
 
-          const transaction = await prepareContractCall({ 
-            contract, 
-            method: "function requestWithdraw(uint256 amount)", 
-            params: [weiAmount] 
-          });
+        const transaction = await prepareContractCall({
+          contract,
+          method: "function requestWithdraw(uint256 amount)",
+          params: [weiAmount]
+        });
 
         await sendTransaction(transaction);
 
       } else if (action === "Borrow") {
-        
-        const contract = getContract({ 
-            client, 
-            chain: defineChain(selectedChain.chainID), 
-            address: selectedChain?.spokeAddress
-          });
 
-          const transaction = await prepareContractCall({ 
-            contract, 
-            method: "function requestBorrow(uint256 amount)", 
-            params: [weiAmount] 
-          });
+        const contract = getContract({
+          client,
+          chain: defineChain(selectedChain.chainID),
+          address: selectedChain?.spokeAddress
+        });
 
-          await sendTransaction(transaction);
+        const transaction = await prepareContractCall({
+          contract,
+          method: "function requestBorrow(uint256 amount)",
+          params: [weiAmount]
+        });
+
+        await sendTransaction(transaction);
 
       } else if (action === "Repay") {
 
-        const contract = getContract({ 
-            client, 
-            chain: defineChain(selectedChain.chainID), 
-            address: selectedChain?.spokeAddress
-          });
+        const contract = getContract({
+          client,
+          chain: defineChain(selectedChain.chainID),
+          address: selectedChain?.spokeAddress
+        });
 
-        const transaction = await prepareContractCall({ 
-            contract, 
-            method: "function repayBorrow(uint256 amount)", 
-            params: [weiAmount] 
-          });
+        const transaction = await prepareContractCall({
+          contract,
+          method: "function repayBorrow(uint256 amount)",
+          params: [weiAmount]
+        });
 
         await sendTransaction(transaction);
       }

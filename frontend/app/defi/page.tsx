@@ -27,7 +27,7 @@ export default function Home() {
       const spokechainsData = [
         {
           name: "Arbitrium Sepolia",
-          logo: "/sepolia.png",
+          logo: "/arbitrumsepolia.webp",
           color: "rgb(50, 60, 150)",
           chainID: 421614,
           rpc: "https://arbitrum-sepolia.blockpi.network/v1/rpc/",
@@ -40,7 +40,7 @@ export default function Home() {
         },
         {
           name: "Base Sepolia",
-          logo: "/sepolia.png",
+          logo: "/baseSepolia.webp",
           color: "rgb(50, 60, 150)",
           chainID: 84532,
           rpc: "https://sepolia.base.org",
@@ -53,7 +53,7 @@ export default function Home() {
         },
         {
           name: "OP Sepolia",
-          logo: "/sepolia.png",
+          logo: "/optimismSepolia.webp",
           color: "rgb(200, 50, 200)",
           chainID: 11155420,
           rpc: "https://sepolia.optimism.io",

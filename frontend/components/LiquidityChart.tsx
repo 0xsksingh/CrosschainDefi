@@ -7,13 +7,13 @@ export default function LiquidityChart({ chains }) {
     const [liquidityData, setLiquidityData] = useState([]);
     const [labels, setLabels] = useState([]);
 
-    const client = createThirdwebClient({ 
+    const client = createThirdwebClient({
         clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!,
     });
-    
-    const contract = getContract({ 
-        client, 
-        chain: defineChain(11155111), 
+
+    const contract = getContract({
+        client,
+        chain: defineChain(11155111),
         address: "0x76414c98ee9AD3F776054f16A351831b71870Ff3",
     });
 
@@ -28,13 +28,13 @@ export default function LiquidityChart({ chains }) {
 
                 for (let i = 0; i < 1000; i++) {
                     try {
-                        const data = await readContract({ 
-                            contract, 
-                            method: "spokeBalancesHistorical", 
+                        const data = await readContract({
+                            contract,
+                            method: "function spokeBalancesHistorical(uint16, uint256) view returns (uint256)",
                             params: [id, BigInt(i)]
                         });
 
-                        console.log(data,"data")
+                        console.log(data, "data")
                         chainData.push(parseInt(data?.toString()!) / 10 ** 18);
                         console.log(id, data);
 
