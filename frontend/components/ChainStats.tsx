@@ -11,11 +11,6 @@ import {
 import Image from "next/image";
 export default function ChainStats({ chains }) {
 
-  const activeacc = useActiveAccount();
-
-  console.log("Chains", chains);
-
-
   return (
     <div>
       <h3 className="mb-3">Chain Stats</h3>
@@ -32,12 +27,10 @@ export default function ChainStats({ chains }) {
             <CardContent>
               <div>
                 <div className="underline" style={{ backgroundColor: chain.color }}></div>
-                <p><strong>Balance:</strong> {parseInt(chain.balance) / 10 ** 18}</p>
+                <p><strong>Balance:</strong> {chain.balance}</p>
               </div>
             </CardContent>
           </Card>
-
-
         ))}
       </div>
     </div>

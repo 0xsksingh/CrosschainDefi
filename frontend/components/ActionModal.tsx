@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState } from "react"
 import { ethers } from "ethers"
 import {
@@ -37,20 +38,23 @@ export default function ActionModal({ action, chains, updateStats }) {
   const [amount, setAmount] = useState("")
   const [selectedChain, setSelectedChain] = useState(null)
 
-  const { mutate: sendTransaction } = useSendTransaction()
+  const { mutate: sendTransaction } = useSendTransaction();
 
   const client = createThirdwebClient({
     clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!,
   })
 
-  console.log(selectedChain)
 
   const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    console.log(selectedChain, amount)
+
     console.log("Called submit")
     if (!selectedChain || !amount) return
 
     try {
-      // Assuming the contract functions are similar to what you had in JS
+        console.log("action", action , amount.toString())
       const weiAmount = ethers.parseEther(amount.toString())
 
       if (action === "Deposit") {
@@ -118,6 +122,11 @@ export default function ActionModal({ action, chains, updateStats }) {
     }
   }
 
+  const updatetheselectedchain = (value) => {
+    const chain = chains.find((chain) => chain.name === value)
+    setSelectedChain(chain)
+  }
+
   return (
     <>
       <AlertDialog>
@@ -145,7 +154,7 @@ export default function ActionModal({ action, chains, updateStats }) {
                 </div>
                 <div className="mb-3">
                   <Label htmlFor="chains-dropdown">Chain</Label>
-                  <Select onValueChange={(value) => setSelectedChain(value)}>
+                  <Select onValueChange={(value) => updatetheselectedchain(value)}>
                     <SelectTrigger className="">
                       <SelectValue placeholder="Select Chain" />
                     </SelectTrigger>

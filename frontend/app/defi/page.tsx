@@ -26,6 +26,7 @@ import ActionModal from "@/components/ActionModal"
 import ChainStats from "@/components/ChainStats"
 import LiquidityChart from "@/components/LiquidityChart"
 import UserOptions from "@/components/UserOptions"
+import { ethers } from "ethers"
 
 export default function Home() {
   const [deposited, setDeposited] = useState(0)
@@ -118,7 +119,8 @@ export default function Home() {
 
         console.log(balance, "balance");
 
-        const weiBalance = parseInt(balance.toString()) / 10 ** 18;
+        const weiBalance = ethers.formatEther(balance);
+
         updatedChains[i].balance = weiBalance;
       }
 
@@ -175,10 +177,10 @@ export default function Home() {
         <UserOptions chains={chains} updateStats={updateStats} />
         <div className="flex">
           <p className="mr-3">
-            Deposited: <span>{deposited}</span>
+            Deposited: <span>{deposited} MTC</span>
           </p>
           <p>
-            Borrowed: <span>{borrowed}</span>
+            Borrowed: <span>{borrowed} MTC</span>
           </p>
         </div>
       </div>
@@ -190,15 +192,6 @@ export default function Home() {
           <ChainStats chains={chains} />
         </div>
       </div>
-
-      {/* {isModalOpen && (
-        <ActionModal
-          action={action}
-          chains={chains}
-          updateStats={updateStats}
-          setIsModalOpen={setIsModalOpen}
-        />
-      )} */}
     </div>
   )
 }
