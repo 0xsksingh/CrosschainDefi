@@ -63,5 +63,83 @@ The Multichain Lending and Borrowing Platform offers a comprehensive solution by
    - The platform automatically handles the necessary transactions across the relevant spokes, ensuring a smooth user experience.
    - Users receive real-time updates on their transactions, maintaining transparency and trust.
 
+## UML Diagramatic Flow
+
+Diagram to illustrate the flow and interactions between the `MultiChainLendingHub`, `MultiChainLendingSpoke`, and `MultiChainToken` contracts in your multi-chain lending application.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Hub as MultiChainLendingHub
+    participant Spoke as MultiChainLendingSpoke
+    participant Token as MultiChainToken
+    participant Relayer as WormholeRelayer
+
+    User ->> Spoke: deposit(amount)
+    Spoke ->> Token: transferFrom(user, spoke, amount)
+    Spoke ->> Hub: sendPayloadToEvm("deposit", spokeChainID, user, amount)
+    Relayer -->> Hub: relay message to hub chain
+    Hub ->> Hub: deposit(spokeChainID, user, amount)
+    Hub ->> Hub: update spoke balances
+
+    User ->> Spoke: requestWithdraw(amount)
+    Spoke ->> Hub: sendPayloadToEvm("requestWithdraw", spokeChainID, user, amount)
+    Relayer -->> Hub: relay message to hub chain
+    Hub ->> Hub: requestWithdraw(spokeChainID, user, amount)
+    Hub ->> Spoke: redistributeValueToSpoke(spokeChainID, amount) (if needed)
+    Hub ->> Spoke: withdrawSpoke(spokeChainID, amount)
+    Hub ->> Hub: update spoke balances
+    Hub ->> Spoke: sendPayloadToEvm("approveWithdraw", user, amount)
+    Relayer -->> Spoke: relay message to spoke chain
+    Spoke ->> Spoke: approveWithdraw(user, amount)
+    Spoke ->> Token: transfer(user, amount)
+
+    User ->> Spoke: requestBorrow(amount)
+    Spoke ->> Hub: sendPayloadToEvm("requestBorrow", spokeChainID, user, amount)
+    Relayer -->> Hub: relay message to hub chain
+    Hub ->> Hub: requestBorrow(spokeChainID, user, amount)
+    Hub ->> Spoke: redistributeValueToSpoke(spokeChainID, amount) (if needed)
+    Hub ->> Spoke: withdrawSpoke(spokeChainID, amount)
+    Hub ->> Hub: update spoke balances
+    Hub ->> Spoke: sendPayloadToEvm("approveBorrow", user, amount)
+    Relayer -->> Spoke: relay message to spoke chain
+    Spoke ->> Spoke: approveBorrow(user, amount)
+    Spoke ->> Token: transfer(user, amount)
+
+    User ->> Spoke: repayBorrow(amount)
+    Spoke ->> Token: transferFrom(user, spoke, amount)
+    Spoke ->> Hub: sendPayloadToEvm("repayBorrow", spokeChainID, user, amount)
+    Relayer -->> Hub: relay message to hub chain
+    Hub ->> Hub: repayBorrow(spokeChainID, user, amount)
+    Hub ->> Hub: update spoke balances
+
+    Note over Hub, Spoke: Redistribution of liquidity across spokes
+    Hub ->> Spoke: sendBridgeRequest(tSpoke, dSpoke, amount)
+    Relayer -->> Spoke: relay message to spoke chain
+    Spoke ->> Spoke: bridgeToSpoke(spokeID, amount)
+    Spoke ->> Token: burn(amount)
+    Spoke ->> Spoke: sendPayloadToEvm("receiveTokens", amount)
+    Relayer -->> Hub: relay message to hub chain
+    Hub ->> Spoke: receiveTokens(amount)
+    Spoke ->> Token: mint(amount)
+```
+
+### Explanation:
+1. **Deposit Flow**:
+    - The user deposits funds to the spoke contract, which then communicates with the hub via Wormhole Relayer to update the balance on the hub.
+
+2. **Withdraw Flow**:
+    - The user requests a withdrawal, and the request is sent from the spoke to the hub. The hub checks and redistributes liquidity if needed, then approves the withdrawal, which is executed on the spoke.
+
+3. **Borrow Flow**:
+    - Similar to the withdraw flow, the user requests a borrow, which is processed on the hub, and upon approval, the spoke executes the loan to the user.
+
+4. **Repay Flow**:
+    - The user repays the borrowed amount, which is communicated from the spoke to the hub to update the balances.
+
+5. **Liquidity Redistribution**:
+    - If a spoke lacks liquidity for a withdrawal or loan, the hub redistributes liquidity across spokes by sending cross-chain messages to balance the required amounts.
+
+
 ## Conclusion
 The Multichain Lending and Borrowing Platform is revolutionizing the way users interact with blockchain technology. By providing a seamless, user-friendly experience and addressing the challenges of liquidity and interoperability, this platform empowers users to maximize their financial potential across multiple chains. Join us in redefining the future of decentralized finance!
