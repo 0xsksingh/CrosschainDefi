@@ -14,10 +14,6 @@ interface MainNavProps {
 
 export function MainNav({ items }: MainNavProps) {
 
-  const client = createThirdwebClient({
-    clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!
-  });
-
   return (
     <div className="flex gap-6 md:gap-10">
       <Link href="/" className="flex items-center space-x-2">
@@ -41,7 +37,6 @@ export function MainNav({ items }: MainNavProps) {
                 </Link>
               )
           )}
-          <ConnectButton client={client} />
         </nav>
       ) : null}
     </div>
