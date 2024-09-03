@@ -3,7 +3,7 @@ import { createThirdwebClient, defineChain, getContract, readContract } from 'th
 import { useReadContract } from "thirdweb/react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-export default function LiquidityChart({ chains }) {
+export default function LiquidityChart({ chains } : any) {
     const [liquidityData, setLiquidityData] = useState([]);
     const [labels, setLabels] = useState([]);
 
