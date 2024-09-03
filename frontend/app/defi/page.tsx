@@ -79,6 +79,8 @@ export default function Home() {
 
       for (let i = 0; i < updatedChains.length; i++) {
         const chain = updatedChains[i];
+
+        console.log(chain, "now the chain is >>>");
         const client = createThirdwebClient({
           clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!,
         });
@@ -92,13 +94,15 @@ export default function Home() {
         const balance = await readContract({
           contract,
           method: "function balanceOf(address) view returns (uint256)",
-          params: [address?.address!],
+          params: [updatedChains[i].spokeAddress],
         });
 
-        console.log(balance, "balance");
+        console.log(balance.toString(), "balance");
 
-        const weiBalance = parseInt(balance.toString()) / 10 ** 18;
-        updatedChains[i].balance = weiBalance;
+        const number = Number(balance.toString());
+
+
+        updatedChains[i].balance = number;
       }
 
       chainsRef.current = updatedChains;

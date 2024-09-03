@@ -25,23 +25,13 @@ export default function ChainStats({ chains }) {
                 <Image src={chain.logo} alt={chain.name} className="mr-2 rounded-xl" width={24} height={24} />
                 {chain.name}
               </CardTitle>
-              <CardDescription>Deploy your new project in one-click.</CardDescription>
+              <CardDescription>MultiChain Token Balance</CardDescription>
             </CardHeader>
             <CardContent>
               <div>
                 <p><strong>Balance:</strong> {parseInt(chain.balance) / 10 ** 18}</p>
               </div>
             </CardContent>
-            {/* <div key={index} className="card shadow m-3">
-              <div className="card-body">
-                <div className="card-title flex items-center">
-                  <div className="underline" style={{ backgroundColor: chain.color }}></div>
-                  <img src={chain.logo} alt={chain.name} className="mr-2" width={20} height={20} />
-                  <h5>{chain.name}</h5>
-                </div>
-                <p><strong>Balance:</strong> {parseInt(chain.balance) / 10 ** 18}</p>
-              </div>
-            </div> */}
           </Card>
 
 
