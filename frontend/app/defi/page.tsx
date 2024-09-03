@@ -1,13 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useActiveAccount } from "thirdweb/react";
 import LiquidityChart from "@/components/LiquidityChart";
 import ChainStats from "@/components/ChainStats";
 import ActionModal from "@/components/ActionModal";
-import LiquidityChainChart from "@/components/LiquidityChainChart";
-import { useReadContract } from "thirdweb/react";
 import { createThirdwebClient, defineChain, getContract, readContract } from "thirdweb";
-
 
 export default function Home() {
   const [deposited, setDeposited] = useState(0);
@@ -15,15 +12,9 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [action, setAction] = useState("");
   const [chains, setChains] = useState([]);
-  const [selectedChain, setSelectedChain] = useState(null);
 
-  const HUB_ADDRESS = "0x553126B5d9535a30fA4639adA7ADBdfdDC746AFd";
-  const HUB_TOKEN_ADDRESS = "0xDe918aEf7f38AA916625d90B3Ca60D5c20B19317";
-  const HUB_CHAIN_ID = 11155111;
-  const HUB_WORMHOLE_ID = 10002;
-  
+  const chainsRef = useRef([]);
   const address = useActiveAccount();
-
 
   useEffect(() => {
     if (address?.address) {
@@ -31,11 +22,8 @@ export default function Home() {
     }
   }, [address]);
 
-
   useEffect(() => {
-    // Load chains data here
     const loadChains = async () => {
-
       const spokechainsData = [
         {
           name: "Arbitrium Sepolia",
@@ -49,7 +37,8 @@ export default function Home() {
           symbol: "ETH",
           balance: "0",
           data: [],
-        }, {
+        },
+        {
           name: "Base Sepolia",
           logo: "/sepolia.png",
           color: "rgb(50, 60, 150)",
@@ -61,7 +50,8 @@ export default function Home() {
           symbol: "ETH",
           balance: "0",
           data: [],
-        }, {
+        },
+        {
           name: "OP Sepolia",
           logo: "/sepolia.png",
           color: "rgb(200, 50, 200)",
@@ -73,49 +63,84 @@ export default function Home() {
           symbol: "ETH",
           balance: "0",
           data: [],
-        }]
+        },
+      ];
 
+      chainsRef.current = spokechainsData;
       setChains(spokechainsData);
     };
 
     loadChains();
   }, []);
 
+  useEffect(() => {
+    const fetchChainBalances = async () => {
+      const updatedChains = [...chainsRef.current];
+
+      for (let i = 0; i < updatedChains.length; i++) {
+        const chain = updatedChains[i];
+        const client = createThirdwebClient({
+          clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!,
+        });
+
+        const contract = getContract({
+          client,
+          chain: defineChain(chain.chainID),
+          address: chain.tokenAddress,
+        });
+
+        const balance = await readContract({
+          contract,
+          method: "function balanceOf(address) view returns (uint256)",
+          params: [address?.address!],
+        });
+
+        console.log(balance, "balance");
+
+        const weiBalance = parseInt(balance.toString()) / 10 ** 18;
+        updatedChains[i].balance = weiBalance;
+      }
+
+      chainsRef.current = updatedChains;
+      setChains(updatedChains);
+    };
+
+    if (chains.length > 0) {
+      fetchChainBalances();
+    }
+  }, [address]);
+
   const handleAction = (actionType) => {
     setAction(actionType);
     setIsModalOpen(true);
   };
 
-  const updateStats = async() => {
-
-    const client = createThirdwebClient({ 
-      clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!
-     });
-    
-
-    const contract =  getContract({ 
-      client, 
-      chain: defineChain(11155111), 
-      address: "0x76414c98ee9AD3F776054f16A351831b71870Ff3"
+  const updateStats = async () => {
+    const client = createThirdwebClient({
+      clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!,
     });
 
-    const borrowsdata = await readContract({ 
-      contract, 
-      method: "function borrows(address) view returns (uint256)", 
-      params: [address?.address!] 
-    })
+    const contract = getContract({
+      client,
+      chain: defineChain(11155111),
+      address: "0x76414c98ee9AD3F776054f16A351831b71870Ff3",
+    });
 
-    const depositdata = await readContract({ 
-      contract, 
-      method: "function deposits(address) view returns (uint256)", 
-      params: [address?.address!] 
+    const borrowsdata = await readContract({
+      contract,
+      method: "function borrows(address) view returns (uint256)",
+      params: [address?.address!],
+    });
+
+    const depositdata = await readContract({
+      contract,
+      method: "function deposits(address) view returns (uint256)",
+      params: [address?.address!],
     });
 
     setDeposited(Number(depositdata) / 10 ** 18);
     setBorrowed(Number(borrowsdata) / 10 ** 18);
   };
-
-  console.log("Chains >>", chains);
 
   return (
     <div className="container mx-auto p-4">
