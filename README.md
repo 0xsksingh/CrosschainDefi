@@ -51,6 +51,8 @@ MultiChainSpoke -
 
 3. https://thirdweb.com/arbitrum-sepolia/0xa93208bB5798bd2B7A6d56DE7F346D332088528c
 
+![image](https://github.com/user-attachments/assets/5f32e250-5c27-4b15-b96e-9eea52702798)
+
 
 ## How It Works
 1. **Wormhole Integration**: The platform utilizes the Wormhole protocol to facilitate cross-chain communication, ensuring that transactions are executed swiftly and securely.
