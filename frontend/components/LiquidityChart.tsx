@@ -1,24 +1,96 @@
-import { Line } from 'react-chartjs-2';
+import { useState, useEffect } from 'react';
+import { createThirdwebClient, defineChain, getContract } from 'thirdweb';
+import { useReadContract } from "thirdweb/react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function LiquidityChart({ chains }) {
-  const data = {
-    labels: Array.from({ length: 1000 }, (_, i) => i),
-    datasets: chains.map(chain => ({
-      label: chain.name,
-      data: [1, 2, 3, 4, 5, 6, 7, 8],
-      borderColor: chain.color,
-      tension: 0.2,
-    })),
-  };
+    const [liquidityData, setLiquidityData] = useState([]);
+    const [labels, setLabels] = useState([]);
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-    },
-  };
+    const client = createThirdwebClient({ 
+        clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!,
+    });
+    
+    const contract = getContract({ 
+        client, 
+        chain: defineChain(11155111), 
+        address: "0x76414c98ee9AD3F776054f16A351831b71870Ff3",
+    });
 
-  return <Line data={data} options={options} />;
+    useEffect(() => {
+        const fetchLiquidityData = async () => {
+            const allChainData = [];
+            const newLabels = [];
+
+            for (const chain of chains) {
+                const id = chain.wormholeID;
+                const chainData = [];
+
+                for (let i = 0; i < 1000; i++) {
+                    try {
+                        const { data } = await useReadContract({ 
+                            contract, 
+                            method: "spokeBalancesHistorical", 
+                            params: [id, BigInt(i)]
+                        });
+
+                        chainData.push(parseInt(data?.toString()!) / 10 ** 18);
+                        console.log(id, data);
+
+                        if (newLabels.length <= i) {
+                            newLabels.push(i);
+                        }
+                    } catch (err) {
+                        console.error(`Error fetching data for ${chain.name} at index ${i}:`, err);
+                        break;
+                    }
+                }
+
+                allChainData.push({
+                    name: chain.name,
+                    data: chainData,
+                    color: chain.color,
+                });
+            }
+
+            setLiquidityData(allChainData);
+            setLabels(newLabels);
+        };
+
+        fetchLiquidityData();
+    }, [chains]);
+
+    const chartData = labels.map((label, index) => {
+        const dataPoint = { label };
+        liquidityData.forEach(chain => {
+            dataPoint[chain.name] = chain.data[index];
+        });
+        return dataPoint;
+    });
+
+    return (
+        <div style={{ width: '100%', height: 300 }}>
+            <ResponsiveContainer>
+                <LineChart
+                    data={chartData}
+                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="label" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    {liquidityData.map(chain => (
+                        <Line
+                            key={chain.name}
+                            type="monotone"
+                            dataKey={chain.name}
+                            stroke={chain.color}
+                            activeDot={{ r: 8 }}
+                        />
+                    ))}
+                </LineChart>
+            </ResponsiveContainer>
+        </div>
+    );
 }

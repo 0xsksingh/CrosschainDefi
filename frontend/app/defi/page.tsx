@@ -5,10 +5,12 @@ import LiquidityChart from "@/components/LiquidityChart";
 import ChainStats from "@/components/ChainStats";
 import ActionModal from "@/components/ActionModal";
 import LiquidityChainChart from "@/components/LiquidityChainChart";
+import { useReadContract } from "thirdweb/react";
+import { createThirdwebClient, defineChain, getContract, readContract } from "thirdweb";
 
 export default function Home() {
-  const [deposited, setDeposited] = useState(0);
-  const [borrowed, setBorrowed] = useState(0);
+  const [deposited, setDeposited] = useState("");
+  const [borrowed, setBorrowed] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [action, setAction] = useState("");
   const [chains, setChains] = useState([]);
@@ -20,6 +22,7 @@ export default function Home() {
   const HUB_WORMHOLE_ID = 10002;
   
   const address = useActiveAccount();
+  console.log(address,"s")
 
   useEffect(() => {
     // Load chains data here
@@ -72,9 +75,33 @@ export default function Home() {
     setIsModalOpen(true);
   };
 
-  const updateStats = (newDeposited, newBorrowed) => {
-    setDeposited(newDeposited);
-    setBorrowed(newBorrowed);
+  const updateStats = async(newDeposited, newBorrowed) => {
+
+    const client = createThirdwebClient({ 
+      clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!
+     });
+    
+
+    const contract =  getContract({ 
+      client, 
+      chain: defineChain(11155111), 
+      address: "0x76414c98ee9AD3F776054f16A351831b71870Ff3"
+    });
+
+    const borrowsdata = await readContract({ 
+      contract, 
+      method: "function borrows(address) view returns (uint256)", 
+      params: [address?.address!] 
+    })
+
+    const { data, isLoading } = useReadContract({ 
+      contract, 
+      method: "function deposits(address) view returns (uint256)", 
+      params: [address?.address!] 
+    });
+
+    setDeposited(data?.toString()!);
+    setBorrowed(borrowsdata.toString());
   };
 
   console.log("Chains >>", chains);
@@ -99,7 +126,7 @@ export default function Home() {
       </div>
       <div className="flex">
         <div className="w-2/3">
-          <LiquidityChainChart chains={chains} />
+          <LiquidityChart chains={chains} />
         </div>
         <div className="w-1/3">
           <ChainStats chains={chains} />
