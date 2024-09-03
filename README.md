@@ -5,6 +5,29 @@
 ## Overview
 The Multichain Lending and Borrowing Platform is designed to empower users with the flexibility to manage their assets across various blockchain networks. Utilizing a Hub and Spoke model, this platform facilitates seamless interoperability and liquidity, allowing users to engage in lending, depositing, repaying, and redeeming activities on different chains without the complexity typically associated with multichain operations.
 
+## Problems It Solves
+- **Fragmented Liquidity**: Traditional lending and borrowing platforms often limit users to a single blockchain, restricting their access to liquidity and yield opportunities.
+
+- **Complex Cross-Chain Transactions**: Navigating multiple blockchains can be cumbersome and confusing, leading to user frustration and potential errors.
+
+- **Limited Flexibility**: Users often face challenges when trying to manage their assets across different chains, particularly when it comes to repayments and redemptions.
+
+## The Solution
+The Multichain Lending and Borrowing Platform offers a comprehensive solution by leveraging the Wormhole Hub and Spoke model. This architecture allows for seamless interactions between various blockchains, enabling users to perform lending, depositing, repaying, and redeeming activities without the need for complex transactions or intermediaries.
+
+## Features
+- **Lend on Multiple Chains**: Users can lend their assets on one blockchain while benefiting from competitive interest rates.
+  
+- **Cross-Chain Deposits**: Easily deposit assets into different chains, maximizing yield opportunities and diversifying portfolios.
+
+- **Flexible Repayment Options**: Repay loans on any supported chain, providing users with the freedom to manage their liabilities efficiently.
+
+- **Instant Redemption**: Redeem assets across chains instantly, ensuring liquidity and accessibility when needed.
+
+- **User-Friendly Interface**: A clean and intuitive interface that simplifies the multichain experience for both novice and experienced users.
+
+- **Robust Security**: Built with top-tier security protocols to ensure the safety of user assets and transactions.
+
 ## Contract Addresses
 
 Hub ChainiD - 10002
@@ -28,28 +51,6 @@ MultiChainSpoke -
 
 3. https://thirdweb.com/arbitrum-sepolia/0xa93208bB5798bd2B7A6d56DE7F346D332088528c
 
-## Features
-- **Lend on Multiple Chains**: Users can lend their assets on one blockchain while benefiting from competitive interest rates.
-  
-- **Cross-Chain Deposits**: Easily deposit assets into different chains, maximizing yield opportunities and diversifying portfolios.
-
-- **Flexible Repayment Options**: Repay loans on any supported chain, providing users with the freedom to manage their liabilities efficiently.
-
-- **Instant Redemption**: Redeem assets across chains instantly, ensuring liquidity and accessibility when needed.
-
-- **User-Friendly Interface**: A clean and intuitive interface that simplifies the multichain experience for both novice and experienced users.
-
-- **Robust Security**: Built with top-tier security protocols to ensure the safety of user assets and transactions.
-
-## Problems It Solves
-- **Fragmented Liquidity**: Traditional lending and borrowing platforms often limit users to a single blockchain, restricting their access to liquidity and yield opportunities.
-
-- **Complex Cross-Chain Transactions**: Navigating multiple blockchains can be cumbersome and confusing, leading to user frustration and potential errors.
-
-- **Limited Flexibility**: Users often face challenges when trying to manage their assets across different chains, particularly when it comes to repayments and redemptions.
-
-## The Solution
-The Multichain Lending and Borrowing Platform offers a comprehensive solution by leveraging the Wormhole Hub and Spoke model. This architecture allows for seamless interactions between various blockchains, enabling users to perform lending, depositing, repaying, and redeeming activities without the need for complex transactions or intermediaries.
 
 ## How It Works
 1. **Wormhole Integration**: The platform utilizes the Wormhole protocol to facilitate cross-chain communication, ensuring that transactions are executed swiftly and securely.
