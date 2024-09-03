@@ -13,13 +13,15 @@ export default function ChainStats({ chains }) {
 
   const activeacc = useActiveAccount();
 
+  console.log("Chains", chains);
+
 
   return (
     <div>
       <h3 className="mb-3">Chain Stats</h3>
       <div className="flex flex-col gap-4">
         {chains.map((chain, index) => (
-          <Card key={index}>
+          <Card key={index} className={`border-[${chain.color}]`}>
             <CardHeader>
               <CardTitle className="flex flex-row gap-2">
                 <Image src={chain.logo} alt={chain.name} className="mr-2 rounded-xl" width={24} height={24} />
@@ -29,6 +31,7 @@ export default function ChainStats({ chains }) {
             </CardHeader>
             <CardContent>
               <div>
+                <div className="underline" style={{ backgroundColor: chain.color }}></div>
                 <p><strong>Balance:</strong> {parseInt(chain.balance) / 10 ** 18}</p>
               </div>
             </CardContent>
