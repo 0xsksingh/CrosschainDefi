@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { createThirdwebClient, defineChain, getContract } from 'thirdweb';
+import { createThirdwebClient, defineChain, getContract, readContract } from 'thirdweb';
 import { useReadContract } from "thirdweb/react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -28,12 +28,13 @@ export default function LiquidityChart({ chains }) {
 
                 for (let i = 0; i < 1000; i++) {
                     try {
-                        const { data } = await useReadContract({ 
+                        const data = await readContract({ 
                             contract, 
                             method: "spokeBalancesHistorical", 
                             params: [id, BigInt(i)]
                         });
 
+                        console.log(data,"data")
                         chainData.push(parseInt(data?.toString()!) / 10 ** 18);
                         console.log(id, data);
 
@@ -67,6 +68,8 @@ export default function LiquidityChart({ chains }) {
         });
         return dataPoint;
     });
+
+    console.log('Liquidity Data:', chartData);
 
     return (
         <div style={{ width: '100%', height: 300 }}>

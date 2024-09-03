@@ -8,9 +8,10 @@ import LiquidityChainChart from "@/components/LiquidityChainChart";
 import { useReadContract } from "thirdweb/react";
 import { createThirdwebClient, defineChain, getContract, readContract } from "thirdweb";
 
+
 export default function Home() {
-  const [deposited, setDeposited] = useState("");
-  const [borrowed, setBorrowed] = useState("");
+  const [deposited, setDeposited] = useState(0);
+  const [borrowed, setBorrowed] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [action, setAction] = useState("");
   const [chains, setChains] = useState([]);
@@ -22,7 +23,14 @@ export default function Home() {
   const HUB_WORMHOLE_ID = 10002;
   
   const address = useActiveAccount();
-  console.log(address,"s")
+
+
+  useEffect(() => {
+    if (address?.address) {
+      updateStats();
+    }
+  }, [address]);
+
 
   useEffect(() => {
     // Load chains data here
@@ -39,6 +47,7 @@ export default function Home() {
           spokeAddress: "0xa93208bB5798bd2B7A6d56DE7F346D332088528c",
           tokenAddress: "0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60",
           symbol: "ETH",
+          balance: "0",
           data: [],
         }, {
           name: "Base Sepolia",
@@ -50,6 +59,7 @@ export default function Home() {
           spokeAddress: "0x553126B5d9535a30fA4639adA7ADBdfdDC746AFd",
           tokenAddress: "0x6E411aAE23ba8eB4EeD82e274CC32887511eCF6E",
           symbol: "ETH",
+          balance: "0",
           data: [],
         }, {
           name: "OP Sepolia",
@@ -61,6 +71,7 @@ export default function Home() {
           spokeAddress: "0xa93208bB5798bd2B7A6d56DE7F346D332088528c",
           tokenAddress: "0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60",
           symbol: "ETH",
+          balance: "0",
           data: [],
         }]
 
@@ -75,7 +86,7 @@ export default function Home() {
     setIsModalOpen(true);
   };
 
-  const updateStats = async(newDeposited, newBorrowed) => {
+  const updateStats = async() => {
 
     const client = createThirdwebClient({ 
       clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!
@@ -94,14 +105,14 @@ export default function Home() {
       params: [address?.address!] 
     })
 
-    const { data, isLoading } = useReadContract({ 
+    const depositdata = await readContract({ 
       contract, 
       method: "function deposits(address) view returns (uint256)", 
       params: [address?.address!] 
     });
 
-    setDeposited(data?.toString()!);
-    setBorrowed(borrowsdata.toString());
+    setDeposited(Number(depositdata) / 10 ** 18);
+    setBorrowed(Number(borrowsdata) / 10 ** 18);
   };
 
   console.log("Chains >>", chains);

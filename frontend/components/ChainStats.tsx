@@ -1,5 +1,10 @@
+import { useActiveAccount, useReadContract } from "thirdweb/react";
+
 export default function ChainStats({ chains }) {
 
+  const activeacc = useActiveAccount();
+
+  
 
     return (
       <div>
