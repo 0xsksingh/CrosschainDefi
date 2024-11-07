@@ -1,6 +1,11 @@
 // @ts-nocheck
-import React, { useState } from "react"
-import { ethers } from "ethers"
+import React, { useEffect, useState } from "react"
+import {
+  useAccount,
+  useSwitchChain,
+  useWallets,
+} from "@particle-network/connectkit"
+import { Contract, ethers } from "ethers"
 import {
   createThirdwebClient,
   defineChain,
@@ -9,6 +14,7 @@ import {
 } from "thirdweb"
 import { useSendTransaction } from "thirdweb/react"
 
+import { SPOKE_TOKEN_ABI } from "@/config/SpokeTokenABI"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,83 +42,89 @@ import { Label } from "./ui/label"
 
 export default function ActionModal({ action, chains, updateStats }) {
   const [amount, setAmount] = useState("")
-  const [selectedChain, setSelectedChain] = useState(null)
+  const [selectedChain, setSelectedChain] = useState(chains[0])
 
-  const { mutate: sendTransaction } = useSendTransaction();
+  const [buttonText, setButtonText] = useState("Execute")
+
+  const { mutate: sendTransaction } = useSendTransaction()
+
+  const { switchChain, switchChainAsync, error, status } = useSwitchChain()
+  const { chainId } = useAccount()
 
   const client = createThirdwebClient({
     clientId: process.env.NEXT_PUBLIC_THIRDWEB_KEY!,
   })
 
+  const [primaryWallet] = useWallets()
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     console.log(selectedChain, amount)
 
     console.log("Called submit")
     if (!selectedChain || !amount) return
 
     try {
-        console.log("action", action , amount.toString())
+      console.log("action", action, amount.toString())
       const weiAmount = ethers.parseEther(amount.toString())
 
       if (action === "Deposit") {
-        const contract = getContract({
-          client,
-          chain: defineChain(selectedChain.chainID),
-          address: selectedChain?.spokeAddress,
-        })
+        console.log("selectedChain", selectedChain, weiAmount)
 
-        const transaction = prepareContractCall({
-          contract,
-          method: "function deposit(uint256 amount)",
-          params: [weiAmount],
-        })
+        const walletClient = primaryWallet.getWalletClient()
 
-        await sendTransaction(transaction)
+        const contract = new Contract(
+          selectedChain?.spokeAddress,
+          SPOKE_TOKEN_ABI,
+          walletClient
+        )
+
+        console.log("Contract", contract)
+
+        const tx = await contract.deposit(weiAmount)
+
+        console.log("tx", tx)
       } else if (action === "Withdraw") {
-        const contract = getContract({
-          client,
-          chain: defineChain(selectedChain.chainID),
-          address: selectedChain?.spokeAddress,
-        })
+        const walletClient = primaryWallet.getWalletClient()
 
-        const transaction = await prepareContractCall({
-          contract,
-          method: "function requestWithdraw(uint256 amount)",
-          params: [weiAmount],
-        })
+        const contract = new Contract(
+          selectedChain?.spokeAddress,
+          SPOKE_TOKEN_ABI,
+          walletClient
+        )
 
-        await sendTransaction(transaction)
+        console.log("Contract", contract)
+
+        const tx = await contract.requestWithdraw(weiAmount)
+
+        console.log("tx", tx)
       } else if (action === "Borrow") {
-        const contract = getContract({
-          client,
-          chain: defineChain(selectedChain.chainID),
-          address: selectedChain?.spokeAddress,
-        })
+        const walletClient = primaryWallet.getWalletClient()
 
-        const transaction = await prepareContractCall({
-          contract,
-          method: "function requestBorrow(uint256 amount)",
-          params: [weiAmount],
-        })
+        const contract = new Contract(
+          selectedChain?.spokeAddress,
+          SPOKE_TOKEN_ABI,
+          walletClient
+        )
 
-        await sendTransaction(transaction)
+        console.log("Contract", contract)
+
+        const tx = await contract.requestBorrow(weiAmount)
+
+        console.log("tx", tx)
       } else if (action === "Repay") {
-        const contract = getContract({
-          client,
-          chain: defineChain(selectedChain.chainID),
-          address: selectedChain?.spokeAddress,
-        })
+        const walletClient = primaryWallet.getWalletClient()
 
-        const transaction = await prepareContractCall({
-          contract,
-          method: "function repayBorrow(uint256 amount)",
-          params: [weiAmount],
-        })
+        const contract = new Contract(
+          selectedChain?.spokeAddress,
+          SPOKE_TOKEN_ABI,
+          walletClient
+        )
 
-        await sendTransaction(transaction)
+        console.log("Contract", contract)
+
+        const tx = await contract.repayBorrow(weiAmount)
+
+        console.log("tx", tx)
       }
 
       updateStats(weiAmount) // Update stats after the transaction
@@ -127,6 +139,14 @@ export default function ActionModal({ action, chains, updateStats }) {
     setSelectedChain(chain)
   }
 
+  const handleChainSwitch = async () => {
+    if (chainId !== selectedChain.chainID) {
+      console.log("Switching chain", selectedChain, chainId)
+      await switchChain({ chainId: selectedChain.chainID })
+      return
+    }
+  }
+
   return (
     <>
       <AlertDialog>
@@ -138,47 +158,57 @@ export default function ActionModal({ action, chains, updateStats }) {
             <AlertDialogTitle>{action}</AlertDialogTitle>
             <AlertDialogDescription></AlertDialogDescription>
           </AlertDialogHeader>
-          <form onSubmit={(e) => handleSubmit(e)}>
-            <div className="modal">
-              <div className="modal-content">
-                <div className="mb-3">
-                  <Label htmlFor="amount">Amount</Label>
-                  <Input
-                    type="number"
-                    className="form-control"
-                    id="amount"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="Enter amount"
-                  />
-                </div>
-                <div className="mb-3">
-                  <Label htmlFor="chains-dropdown">Chain</Label>
-                  <Select onValueChange={(value) => updatetheselectedchain(value)}>
-                    <SelectTrigger className="">
-                      <SelectValue placeholder="Select Chain" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Select Chain</SelectLabel>
-                        {chains.map((chain) => (
-                          <SelectItem value={chain.name}>
-                            {chain.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
+          <div className="modal">
+            <div className="modal-content">
+              <div className="mb-3">
+                <Label htmlFor="amount">Amount</Label>
+                <Input
+                  type="number"
+                  className="form-control"
+                  id="amount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="Enter amount"
+                />
+              </div>
+              <div className="mb-3">
+                <Label htmlFor="chains-dropdown">Chain</Label>
+                <Select
+                  onValueChange={(value) => updatetheselectedchain(value)}
+                >
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select Chain" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Select Chain</SelectLabel>
+                      {chains.map((chain, id) => (
+                        <SelectItem key={id} value={chain.name}>
+                          {chain.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <Button className="btn btn-primary" type="submit">
+          </div>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            {selectedChain && selectedChain.chainID !== chainId ? (
+              <Button className="btn btn-primary" onClick={handleChainSwitch}>
+                Switch Chain
+              </Button>
+            ) : (
+              <Button
+                className="btn btn-primary"
+                type="submit"
+                onClick={handleSubmit}
+              >
                 Execute
               </Button>
-            </AlertDialogFooter>
-          </form>
+            )}
+          </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </>

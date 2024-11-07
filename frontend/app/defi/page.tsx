@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { ethers } from "ethers"
 import {
   createThirdwebClient,
   defineChain,
@@ -9,6 +10,7 @@ import {
 } from "thirdweb"
 import { useActiveAccount } from "thirdweb/react"
 
+import { ChainsDetails } from "@/config/ChainsDetails"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,14 +28,13 @@ import ActionModal from "@/components/ActionModal"
 import ChainStats from "@/components/ChainStats"
 import LiquidityChart from "@/components/LiquidityChart"
 import UserOptions from "@/components/UserOptions"
-import { ethers } from "ethers"
 
 export default function Home() {
   const [deposited, setDeposited] = useState(0)
   const [borrowed, setBorrowed] = useState(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [action, setAction] = useState("")
-  const [chains, setChains] = useState([])
+  const [chains, setChains] = useState(ChainsDetails)
 
   const chainsRef = useRef([])
   const address = useActiveAccount()
@@ -44,60 +45,60 @@ export default function Home() {
     }
   }, [address])
 
-  useEffect(() => {
-    const loadChains = async () => {
-      const spokechainsData = [
-        {
-          name: "Arbitrium Sepolia",
-          logo: "/arbitrumsepolia.webp",
-          color: "#323C96",
-          chainID: 421614,
-          rpc: "https://arbitrum-sepolia.blockpi.network/v1/rpc/",
-          wormholeID: 10003,
-          spokeAddress: "0xa93208bB5798bd2B7A6d56DE7F346D332088528c",
-          tokenAddress: "0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60",
-          symbol: "ETH",
-          balance: "0",
-          data: [],
-        },
-        {
-          name: "Base Sepolia",
-          logo: "/baseSepolia.webp",
-          color: "rgb(50, 60, 150)",
-          chainID: 84532,
-          rpc: "https://sepolia.base.org",
-          wormholeID: 10004,
-          spokeAddress: "0x553126B5d9535a30fA4639adA7ADBdfdDC746AFd",
-          tokenAddress: "0x6E411aAE23ba8eB4EeD82e274CC32887511eCF6E",
-          symbol: "ETH",
-          balance: "0",
-          data: [],
-        },
-        {
-          name: "OP Sepolia",
-          logo: "/optimismSepolia.webp",
-          color: "rgb(200, 50, 200)",
-          chainID: 11155420,
-          rpc: "https://sepolia.optimism.io",
-          wormholeID: 10005,
-          spokeAddress: "0xa93208bB5798bd2B7A6d56DE7F346D332088528c",
-          tokenAddress: "0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60",
-          symbol: "ETH",
-          balance: "0",
-          data: [],
-        },
-      ]
+  // useEffect(() => {
+  //   const loadChains = async () => {
+  //     const spokechainsData = [
+  //       {
+  //         name: "Arbitrium Sepolia",
+  //         logo: "/arbitrumsepolia.webp",
+  //         color: "#323C96",
+  //         chainID: 421614,
+  //         rpc: "https://arbitrum-sepolia.blockpi.network/v1/rpc/",
+  //         wormholeID: 10003,
+  //         spokeAddress: "0xa93208bB5798bd2B7A6d56DE7F346D332088528c",
+  //         tokenAddress: "0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60",
+  //         symbol: "ETH",
+  //         balance: "0",
+  //         data: [],
+  //       },
+  //       {
+  //         name: "Base Sepolia",
+  //         logo: "/baseSepolia.webp",
+  //         color: "rgb(50, 60, 150)",
+  //         chainID: 84532,
+  //         rpc: "https://sepolia.base.org",
+  //         wormholeID: 10004,
+  //         spokeAddress: "0x553126B5d9535a30fA4639adA7ADBdfdDC746AFd",
+  //         tokenAddress: "0x6E411aAE23ba8eB4EeD82e274CC32887511eCF6E",
+  //         symbol: "ETH",
+  //         balance: "0",
+  //         data: [],
+  //       },
+  //       {
+  //         name: "OP Sepolia",
+  //         logo: "/optimismSepolia.webp",
+  //         color: "rgb(200, 50, 200)",
+  //         chainID: 11155420,
+  //         rpc: "https://sepolia.optimism.io",
+  //         wormholeID: 10005,
+  //         spokeAddress: "0xa93208bB5798bd2B7A6d56DE7F346D332088528c",
+  //         tokenAddress: "0x9df6785ec662ff2426F1f064D4c72B82aFEd0A60",
+  //         symbol: "ETH",
+  //         balance: "0",
+  //         data: [],
+  //       },
+  //     ]
 
-      chainsRef.current = spokechainsData
-      setChains(spokechainsData)
-    }
+  //     chainsRef.current = spokechainsData
+  //     setChains(spokechainsData)
+  //   }
 
-    loadChains()
-  }, [])
+  //   loadChains()
+  // }, [])
 
   useEffect(() => {
     const fetchChainBalances = async () => {
-      const updatedChains = [...chainsRef.current]
+      const updatedChains = [...ChainsDetails]
 
       for (let i = 0; i < updatedChains.length; i++) {
         const chain = updatedChains[i]
@@ -114,17 +115,16 @@ export default function Home() {
         const balance = await readContract({
           contract,
           method: "function balanceOf(address) view returns (uint256)",
-          params: [address?.address!],
-        });
+          params: [address?.address as string],
+        })
 
-        console.log(balance, "balance");
+        console.log(balance, "balance")
 
-        const weiBalance = ethers.formatEther(balance);
+        const weiBalance = ethers.formatEther(balance)
 
-        updatedChains[i].balance = weiBalance;
+        updatedChains[i].balance = weiBalance
       }
 
-      chainsRef.current = updatedChains
       setChains(updatedChains)
     }
 
